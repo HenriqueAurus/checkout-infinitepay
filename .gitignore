@@ -1,5 +1,7 @@
 # Segredos e configuração local
 .env
+.env.*
+!.env.example
 
 # Logs (mantém só a pasta)
 logs/*

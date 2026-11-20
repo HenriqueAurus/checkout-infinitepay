@@ -1,0 +1,14 @@
+# Segredos e configuração local
+.env
+
+# Logs (mantém só a pasta)
+logs/*
+!logs/.gitkeep
+
+# Arquivo de diagnóstico temporário
+public/diagnostico.php
+
+# Sistema e editor
+Thumbs.db
+.DS_Store
+.vscode/

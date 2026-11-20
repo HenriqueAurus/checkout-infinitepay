@@ -1,0 +1,7 @@
+Options -Indexes
+
+RewriteEngine On
+RewriteBase /checkout-infinitepay/
+
+# Tudo que não estiver em public/ é reescrito para dentro de public/
+RewriteRule ^(?!public/)(.*)$ public/$1 [L]

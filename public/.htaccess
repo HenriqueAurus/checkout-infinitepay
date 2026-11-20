@@ -1,0 +1,13 @@
+Options -Indexes
+DirectoryIndex index.html
+
+RewriteEngine On
+RewriteBase /checkout-infinitepay/public/
+
+# Toda rota /api/... é atendida pelo Front Controller
+RewriteRule ^api/ api/index.php [L,QSA]
+
+# Nunca servir arquivos ocultos (.env, .git etc.)
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>

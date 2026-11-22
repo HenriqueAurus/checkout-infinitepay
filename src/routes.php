@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 use App\Controllers\CheckoutController;
+use App\Controllers\PagamentoController;
 use App\Controllers\PedidoController;
 use App\Controllers\ProdutoController;
 use App\Controllers\SimuladorController;
@@ -16,10 +17,15 @@ use App\Repositories\ProdutoRepository;
 use App\Repositories\SimulacaoRepository;
 use App\Services\CheckoutService;
 use App\Services\GatewayFactory;
+use App\Services\PagamentoService;
 use App\Services\PedidoService;
 use App\Services\SimuladorService;
 
 return static function (Router $router): void {
+    // O cenário de simulação só vale no modo simulation; no modo real o cabeçalho é ignorado
+    $cenarioSimulado = static fn (Request $req): ?string =>
+        Env::get('PAYMENT_MODE', 'simulation') === 'simulation' ? $req->header('X-Simulacao') : null;
+
     $router->add('GET', '/api/ping', static fn (Request $req, array $p): Response => Response::ok([
         'status'         => 'ok',
         'modo_pagamento' => Env::get('PAYMENT_MODE', 'simulation'),
@@ -30,20 +36,15 @@ return static function (Router $router): void {
         (new ProdutoController(new ProdutoRepository(Database::connection())))->listar($req, $p)
     );
 
-    $router->add('POST', '/api/checkout', static function (Request $req, array $p): Response {
+    $router->add('POST', '/api/checkout', static function (Request $req, array $p) use ($cenarioSimulado): Response {
         $pdo = Database::connection();
-
-        // O cenário de simulação só vale no modo simulation; no modo real o cabeçalho é ignorado
-        $cenario = Env::get('PAYMENT_MODE', 'simulation') === 'simulation'
-            ? $req->header('X-Simulacao')
-            : null;
 
         $servico = new CheckoutService(
             $pdo,
             new ProdutoRepository($pdo),
             new PedidoRepository($pdo),
             new PagamentoRepository($pdo),
-            GatewayFactory::create($cenario)
+            GatewayFactory::create($pdo, $cenarioSimulado($req))
         );
 
         return (new CheckoutController($servico))->criar($req, $p);
@@ -54,6 +55,19 @@ return static function (Router $router): void {
         $servico = new PedidoService(new PedidoRepository($pdo), new PagamentoRepository($pdo));
 
         return (new PedidoController($servico))->consultar($req, $p);
+    });
+
+    $router->add('POST', '/api/pagamentos/confirmar', static function (Request $req, array $p) use ($cenarioSimulado): Response {
+        $pdo = Database::connection();
+
+        $servico = new PagamentoService(
+            $pdo,
+            new PagamentoRepository($pdo),
+            new PedidoRepository($pdo),
+            GatewayFactory::create($pdo, $cenarioSimulado($req))
+        );
+
+        return (new PagamentoController($servico))->confirmar($req, $p);
     });
 
     // O simulador só existe no modo simulation. No modo real a rota responde como se não existisse.

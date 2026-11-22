@@ -40,6 +40,35 @@ final class PagamentoRepository
         $stmt->execute(['status' => $status, 'id' => $pagamentoId]);
     }
 
+    /**
+     * Marca como pago de forma ATÔMICA. Devolve true só para a requisição que fez a transição;
+     * se o pagamento já estava pago, nada muda e devolve false (base da idempotência).
+     * Pode lançar PDOException 1062 se o transaction_nsu já pertencer a outro pagamento.
+     */
+    public function marcarComoPago(
+        int $pagamentoId,
+        string $transactionNsu,
+        string $slug,
+        ?string $metodo,
+        int $valorPagoCentavos
+    ): bool {
+        $stmt = $this->pdo->prepare(
+            "UPDATE pagamentos
+             SET status = 'pago', transaction_nsu = :tx, slug = :slug, metodo = :metodo,
+                 valor_pago_centavos = :valor
+             WHERE id = :id AND status <> 'pago'"
+        );
+        $stmt->execute([
+            'tx'     => $transactionNsu,
+            'slug'   => $slug,
+            'metodo' => $metodo,
+            'valor'  => $valorPagoCentavos,
+            'id'     => $pagamentoId,
+        ]);
+
+        return $stmt->rowCount() === 1;
+    }
+
     /** @return array<string, mixed>|null */
     public function buscarPorOrderNsu(string $orderNsu): ?array
     {

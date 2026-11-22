@@ -36,4 +36,35 @@ final class SimulacaoRepository
             'slug'      => $slug,
         ]);
     }
+
+    /**
+     * O que o "provedor simulado" sabe sobre um pedido: a escolha feita no checkout falso
+     * e o valor do link (o total do pedido).
+     *
+     * @return array{resultado: string, metodo: ?string, transaction_nsu: string, slug: string, valor_link_centavos: int}|null
+     */
+    public function buscarPorOrderNsu(string $orderNsu): ?array
+    {
+        $stmt = $this->pdo->prepare(
+            'SELECT s.resultado, s.metodo, s.transaction_nsu, s.slug, p.total_centavos
+             FROM simulacoes s
+             JOIN pagamentos pg ON pg.id = s.pagamento_id
+             JOIN pedidos p ON p.id = pg.pedido_id
+             WHERE pg.order_nsu = :nsu'
+        );
+        $stmt->execute(['nsu' => $orderNsu]);
+        $l = $stmt->fetch();
+
+        if ($l === false) {
+            return null;
+        }
+
+        return [
+            'resultado'           => $l['resultado'],
+            'metodo'              => $l['metodo'],
+            'transaction_nsu'     => $l['transaction_nsu'],
+            'slug'                => $l['slug'],
+            'valor_link_centavos' => (int) $l['total_centavos'],
+        ];
+    }
 }

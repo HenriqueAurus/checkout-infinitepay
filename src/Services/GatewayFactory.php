@@ -12,7 +12,7 @@ use RuntimeException;
 final class GatewayFactory
 {
     /**
-     * @param string|null $cenarioSimulado só é considerado no modo simulation
+     * @param string|null $cenarioSimulado só é considerado no modo simulation; no modo real é ignorado
      */
     public static function create(PDO $pdo, ?string $cenarioSimulado = null): PaymentGateway
     {
@@ -23,7 +23,13 @@ final class GatewayFactory
                 $cenarioSimulado === 'indisponivel',
                 new SimulacaoRepository($pdo)
             ),
-            'real'       => throw new RuntimeException('Modo real ainda não implementado (Etapa 4E).'),
+            'real'       => new InfinitePayService(
+                rtrim(Env::required('INFINITEPAY_BASE_URL'), '/'),
+                Env::required('INFINITEPAY_HANDLE'),
+                Env::required('INFINITEPAY_API_KEY'),
+                rtrim(Env::required('APP_URL'), '/'),
+                Env::getInt('INFINITEPAY_TIMEOUT', 15)
+            ),
             default      => throw new RuntimeException('PAYMENT_MODE inválido.'),
         };
     }

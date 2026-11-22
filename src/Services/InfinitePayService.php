@@ -23,7 +23,9 @@ final class InfinitePayService implements PaymentGateway
         private readonly string $handle,
         private readonly string $apiKey,
         private readonly string $appUrl,
-        private readonly int $timeout
+        private readonly int $timeout,
+        private readonly ?string $webhookUrl = null
+        
     ) {
         if (!str_starts_with($baseUrl, 'https://')) {
             throw new RuntimeException('INFINITEPAY_BASE_URL deve começar com https://');
@@ -38,7 +40,7 @@ final class InfinitePayService implements PaymentGateway
         return 'real';
     }
 
-    public function createCheckoutLink(array $pedido): array
+        public function createCheckoutLink(array $pedido): array
     {
         $itens = [];
         $soma = 0;
@@ -56,7 +58,7 @@ final class InfinitePayService implements PaymentGateway
             throw new GatewayException('Itens do pedido inconsistentes com o total.');
         }
 
-        $resposta = $this->requisitar('/links', [
+        $payload = [
             'handle'       => $this->handle,
             'order_nsu'    => $pedido['codigo'],
             'items'        => $itens,
@@ -66,7 +68,14 @@ final class InfinitePayService implements PaymentGateway
                 'single_payment' => true,
                 'valid_until'    => (new DateTimeImmutable(self::LINK_VALIDADE))->format('c'),
             ],
-        ], true);
+        ];
+
+        // A webhook_url é definida na criação do link e NÃO pode ser editada depois
+        if ($this->webhookUrl !== null) {
+            $payload['webhook_url'] = $this->webhookUrl;
+        }
+
+        $resposta = $this->requisitar('/links', $payload, true);
 
         $url = $resposta['url'] ?? null;
         if (!is_string($url) || !$this->urlConfiavel($url)) {

@@ -28,9 +28,18 @@ final class GatewayFactory
                 Env::required('INFINITEPAY_HANDLE'),
                 Env::required('INFINITEPAY_API_KEY'),
                 rtrim(Env::required('APP_URL'), '/'),
-                Env::getInt('INFINITEPAY_TIMEOUT', 15)
+                Env::getInt('INFINITEPAY_TIMEOUT', 15),
+                self::webhookUrl()
             ),
             default      => throw new RuntimeException('PAYMENT_MODE inválido.'),
         };
+    }
+
+    /** A InfinitePay exige HTTPS no webhook; qualquer outra coisa é ignorada. */
+    private static function webhookUrl(): ?string
+    {
+        $url = Env::get('INFINITEPAY_WEBHOOK_URL');
+
+        return ($url !== null && str_starts_with($url, 'https://')) ? $url : null;
     }
 }

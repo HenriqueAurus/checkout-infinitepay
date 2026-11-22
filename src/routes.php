@@ -6,11 +6,13 @@ use App\Controllers\PagamentoController;
 use App\Controllers\PedidoController;
 use App\Controllers\ProdutoController;
 use App\Controllers\SimuladorController;
+use App\Controllers\WebhookController;
 use App\Core\Database;
 use App\Core\Env;
 use App\Core\Request;
 use App\Core\Response;
 use App\Core\Router;
+use App\Repositories\EventoWebhookRepository;
 use App\Repositories\PagamentoRepository;
 use App\Repositories\PedidoRepository;
 use App\Repositories\ProdutoRepository;
@@ -20,6 +22,7 @@ use App\Services\GatewayFactory;
 use App\Services\PagamentoService;
 use App\Services\PedidoService;
 use App\Services\SimuladorService;
+use App\Services\WebhookService;
 
 return static function (Router $router): void {
     // O cenário de simulação só vale no modo simulation; no modo real o cabeçalho é ignorado
@@ -68,6 +71,23 @@ return static function (Router $router): void {
         );
 
         return (new PagamentoController($servico))->confirmar($req, $p);
+    });
+
+    // Notificação da InfinitePay: o corpo NÃO decide nada, o veredicto vem sempre do payment_check
+    $router->add('POST', '/api/webhooks/infinitepay', static function (Request $req, array $p) use ($cenarioSimulado): Response {
+        $pdo = Database::connection();
+        $pagamentos = new PagamentoRepository($pdo);
+
+        $pagamentoService = new PagamentoService(
+            $pdo,
+            $pagamentos,
+            new PedidoRepository($pdo),
+            GatewayFactory::create($pdo, $cenarioSimulado($req))
+        );
+
+        $servico = new WebhookService($pagamentoService, $pagamentos, new EventoWebhookRepository($pdo));
+
+        return (new WebhookController($servico))->infinitepay($req, $p);
     });
 
     // O simulador só existe no modo simulation. No modo real a rota responde como se não existisse.

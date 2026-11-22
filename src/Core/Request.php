@@ -54,9 +54,9 @@ final class Request
     }
 
     /** @return array<string, mixed> */
-    public function json(): array
+    public function json(bool $exigirContentType = true): array
     {
-        if (stripos($this->header('Content-Type') ?? '', 'application/json') !== 0) {
+        if ($exigirContentType && stripos($this->header('Content-Type') ?? '', 'application/json') !== 0) {
             throw new HttpException(415, 'tipo_nao_suportado', 'Envie o corpo como application/json.');
         }
         if ($this->corpo === '') {

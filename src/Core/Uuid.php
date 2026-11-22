@@ -14,4 +14,13 @@ final class Uuid
 
         return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($b), 4));
     }
+
+    /** Aceita só o formato que nós geramos (v4, minúsculas). */
+    public static function valido(string $valor): bool
+    {
+        return preg_match(
+            '/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/',
+            $valor
+        ) === 1;
+    }
 }

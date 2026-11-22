@@ -43,7 +43,7 @@ $charset === 'utf8mb4'
     : $linha('ERRO', "Charset do banco é {$charset}; esperado utf8mb4.");
 
 // ---- Tabelas ----
-$esperadas = ['produtos', 'pedidos', 'itens_pedido', 'pagamentos', 'eventos_webhook'];
+$esperadas = ['produtos', 'pedidos', 'itens_pedido', 'pagamentos', 'eventos_webhook', 'simulacoes'];
 $existentes = $pdo
     ->query('SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE()')
     ->fetchAll(PDO::FETCH_COLUMN);
@@ -64,9 +64,9 @@ $naoInnoDb === 0
 $fks = (int) $pdo
     ->query('SELECT COUNT(*) FROM information_schema.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_SCHEMA = DATABASE()')
     ->fetchColumn();
-$fks === 3
-    ? $linha('OK', 'Chaves estrangeiras: 3 (itens->pedidos, itens->produtos, pagamentos->pedidos).')
-    : $linha('ERRO', "Chaves estrangeiras encontradas: {$fks}; esperado 3.");
+$fks === 4
+    ? $linha('OK', 'Chaves estrangeiras: 4 (itens->pedidos, itens->produtos, pagamentos->pedidos, simulacoes->pagamentos).')
+    : $linha('ERRO', "Chaves estrangeiras encontradas: {$fks}; esperado 4.");
 
 // ---- Produtos ----
 $produtos = $pdo->query('SELECT id, slug, nome, preco_centavos, ativo FROM produtos ORDER BY id')->fetchAll();

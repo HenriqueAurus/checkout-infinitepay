@@ -124,3 +124,20 @@ ON DUPLICATE KEY UPDATE
   imagem_url     = VALUES(imagem_url),
   preco_centavos = VALUES(preco_centavos),
   ativo          = VALUES(ativo);
+
+  -- ---------------------------------------------------------------
+-- simulacoes: resultado escolhido no checkout FALSO (só existe no modo simulation)
+-- ---------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS simulacoes (
+  pagamento_id     BIGINT UNSIGNED NOT NULL,
+  resultado        ENUM('aprovado','recusado','pendente','aprovado_valor_divergente') NOT NULL,
+  metodo           ENUM('pix','credit_card') NULL,
+  transaction_nsu  VARCHAR(100)    NOT NULL,
+  slug             VARCHAR(100)    NOT NULL,
+  criado_em        DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  atualizado_em    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (pagamento_id),
+  UNIQUE KEY uq_simulacoes_transaction (transaction_nsu),
+  CONSTRAINT fk_simulacoes_pagamento FOREIGN KEY (pagamento_id)
+    REFERENCES pagamentos (id) ON DELETE CASCADE
+) ENGINE=InnoDB;

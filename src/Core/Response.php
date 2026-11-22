@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Core;
 
-/** Resposta JSON padronizada: {"dados": ...} ou {"erro": {"codigo", "mensagem"}}. */
+/** Resposta JSON padronizada: {"dados": ...} ou {"erro": {"codigo", "mensagem", "detalhes"?}}. */
 final class Response
 {
     /**
@@ -22,9 +22,15 @@ final class Response
         return new self($status, ['dados' => $dados]);
     }
 
-    public static function error(int $status, string $codigo, string $mensagem): self
+    /** @param array<string, string> $detalhes */
+    public static function error(int $status, string $codigo, string $mensagem, array $detalhes = []): self
     {
-        return new self($status, ['erro' => ['codigo' => $codigo, 'mensagem' => $mensagem]]);
+        $erro = ['codigo' => $codigo, 'mensagem' => $mensagem];
+        if ($detalhes !== []) {
+            $erro['detalhes'] = $detalhes;
+        }
+
+        return new self($status, ['erro' => $erro]);
     }
 
     public function withHeader(string $nome, string $valor): self
@@ -35,6 +41,7 @@ final class Response
     public function send(): void
     {
         http_response_code($this->status);
+        header_remove('X-Powered-By');
         header('Content-Type: application/json; charset=utf-8');
         header('X-Content-Type-Options: nosniff');
         header('Cache-Control: no-store');

@@ -24,7 +24,7 @@ try {
     (require BASE_PATH . '/src/routes.php')($router);
     $resposta = $router->dispatch(Request::fromGlobals());
 } catch (HttpException $e) {
-    $resposta = Response::error($e->getStatus(), $e->getCodigo(), $e->getMessage());
+        $resposta = Response::error($e->getStatus(), $e->getCodigo(), $e->getMessage(), $e->getDetalhes());
 } catch (Throwable $e) {
     // Detalhes só no log; o cliente recebe uma mensagem genérica
     $detalhe = sprintf('%s em %s:%d', get_class($e), basename($e->getFile()), $e->getLine());

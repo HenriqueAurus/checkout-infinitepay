@@ -1,0 +1,40 @@
+:root { --cor: #3b5bdb; --cor-esc: #2f4ac0; --fundo: #f6f7fb; --card: #fff; --texto: #1c2033; --suave: #5b6178; --erro: #c92a2a; --borda: #e2e5f0; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", sans-serif; background: var(--fundo); color: var(--texto); line-height: 1.5; }
+.wrap { max-width: 960px; margin: 0 auto; padding: 0 1rem; }
+.topo { background: var(--card); border-bottom: 1px solid var(--borda); }
+.topo .wrap { display: flex; justify-content: space-between; align-items: center; padding: .9rem 1rem; gap: 1rem; flex-wrap: wrap; }
+.selo { font-size: .8rem; color: var(--suave); }
+h1 { margin: 1.5rem 0 1rem; }
+.grade { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; padding-bottom: 2rem; }
+.cartao, .painel { background: var(--card); border: 1px solid var(--borda); border-radius: 12px; padding: 1rem; }
+.cartao img { width: 100%; height: auto; border-radius: 8px; background: #eef; }
+.cartao h2 { margin: .6rem 0 .2rem; font-size: 1.1rem; }
+.suave { color: var(--suave); margin: .2rem 0; font-size: .92rem; }
+.preco { font-size: 1.3rem; font-weight: 700; margin: .5rem 0; }
+button, .botao { display: inline-block; background: var(--cor); color: #fff; border: 0; border-radius: 8px; padding: .65rem 1.1rem; font: inherit; font-weight: 600; cursor: pointer; text-decoration: none; text-align: center; }
+button:hover, .botao:hover { background: var(--cor-esc); }
+button:disabled { opacity: .6; cursor: wait; }
+.sec { background: transparent; color: var(--cor); border: 1px solid var(--cor); }
+.sec:hover { background: #eef1ff; }
+.aviso { background: #fff4e6; border: 1px solid #ffd8a8; border-radius: 8px; padding: .7rem 1rem; }
+.selo-modo { display: inline-block; padding: .25rem .7rem; border-radius: 999px; font-size: .8rem; font-weight: 700; }
+.simulado { background: #fff3bf; color: #7a5b00; }
+.real { background: #d3f9d8; color: #1b6b2f; }
+.linha { display: flex; justify-content: space-between; gap: 1rem; padding: .45rem 0; border-bottom: 1px solid var(--borda); }
+.total { font-size: 1.25rem; font-weight: 700; border-bottom: 0; }
+.codigo { font-family: ui-monospace, Consolas, monospace; font-size: .85rem; word-break: break-all; }
+.painel { max-width: 560px; margin: 1.5rem auto; }
+.painel .botao, .painel button { width: 100%; margin-top: .8rem; }
+dialog { border: 0; border-radius: 12px; padding: 1.2rem; width: min(92vw, 420px); }
+dialog::backdrop { background: rgba(20, 24, 50, .55); }
+dialog h2 { margin-top: 0; }
+label { display: block; margin-top: .8rem; font-weight: 600; }
+input { display: block; width: 100%; margin-top: .25rem; padding: .6rem; border: 1px solid #c4c9dc; border-radius: 8px; font: inherit; }
+.erro { color: var(--erro); font-size: .85rem; display: block; min-height: 1.1em; margin: .2rem 0 0; }
+.acoes { display: flex; gap: .6rem; margin-top: 1rem; }
+.acoes button { flex: 1; }
+.faixa { padding: .8rem 1rem; border-radius: 8px; font-weight: 600; margin: 1rem 0; }
+.faixa.ok { background: #d3f9d8; border: 1px solid #8ce99a; color: #1b6b2f; }
+.faixa.pend { background: #fff4e6; border: 1px solid #ffd8a8; color: #7a4a00; }
+.faixa.falha { background: #ffe3e3; border: 1px solid #ffa8a8; color: #a61e1e; }

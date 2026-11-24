@@ -38,3 +38,8 @@ input { display: block; width: 100%; margin-top: .25rem; padding: .6rem; border:
 .faixa.ok { background: #d3f9d8; border: 1px solid #8ce99a; color: #1b6b2f; }
 .faixa.pend { background: #fff4e6; border: 1px solid #ffd8a8; color: #7a4a00; }
 .faixa.falha { background: #ffe3e3; border: 1px solid #ffa8a8; color: #a61e1e; }
+.opcao { display: flex; align-items: flex-start; gap: .7rem; padding: .7rem .8rem; border: 1px solid var(--borda); border-radius: 8px; margin-top: .6rem; cursor: pointer; font-weight: 400; }
+.opcao input { width: auto; margin: .25rem 0 0; display: inline-block; flex: none; }
+.opcao strong, .opcao small { display: block; }
+.opcao:has(input:checked) { border-color: var(--cor); background: #eef1ff; }
+h2 { font-size: 1.05rem; margin: 1.2rem 0 .2rem; }

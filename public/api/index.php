@@ -7,7 +7,7 @@ use App\Core\Request;
 use App\Core\Response;
 use App\Core\Router;
 
-// 1) Inicialização: se falhar (ex.: .env ausente), responde 500 genérico
+// 1) Inicialização: se falhar, responde 500 genérico
 try {
     require __DIR__ . '/../../src/bootstrap.php';
 } catch (Throwable $e) {

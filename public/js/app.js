@@ -8,7 +8,7 @@ const App = (() => {
   // Só para EXIBIR valores: o preço real sempre vem do backend
   const brl = (centavos) => moeda.format(centavos / 100);
 
-  // Cria elementos com textContent (nunca innerHTML), evitando XSS
+  // Cria elementos com textContent, evitando XSS
   function el(tag, texto, classe) {
     const n = document.createElement(tag);
     if (texto !== undefined) n.textContent = texto;

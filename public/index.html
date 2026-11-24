@@ -1,12 +1,55 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Loja fictícia</title>
+  <title>Loja Teste</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <h1>Ambiente local funcionando</h1>
-  <p>Página provisória. A loja será criada na Etapa 5.</p>
+  <header class="topo">
+    <div class="wrap">
+      <strong>Loja Teste</strong>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <h1>Produtos</h1>
+    <p id="aviso" class="aviso" hidden></p>
+    <section id="produtos" class="grade" aria-live="polite"></section>
+  </main>
+
+  <dialog id="dlg">
+    <form id="form" novalidate>
+      <h2>Finalizar compra</h2>
+      <p id="resumo" class="suave"></p>
+
+      <label>Nome
+        <input name="comprador" autocomplete="name" maxlength="120" required>
+      </label>
+      <small class="erro" data-erro="comprador"></small>
+
+      <label>E-mail
+        <input name="email" type="email" autocomplete="email" maxlength="160" required>
+      </label>
+      <small class="erro" data-erro="email"></small>
+
+      <label>Quantidade
+        <input name="quantidade" type="number" min="1" max="99" value="1" required>
+      </label>
+      <small class="erro" data-erro="quantidade"></small>
+
+      <p id="erro-geral" class="erro" role="alert"></p>
+
+      <div class="acoes">
+        <button type="button" class="sec" id="cancelar">Cancelar</button>
+        <button type="submit" id="enviar">Ir para o pagamento</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="js/app.js"></script>
+  <script src="js/loja.js"></script>
 </body>
 </html>
